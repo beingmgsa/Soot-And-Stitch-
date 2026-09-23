@@ -1,0 +1,116 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "User profile with contact details, shopping preferences, and role",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Auth UID" },
+        "name": { "type": "string", "maxLength": 100, "description": "Full name of customer or admin" },
+        "email": { "type": "string", "format": "email", "maxLength": 150, "description": "Email address" },
+        "phone": { "type": "string", "maxLength": 25, "description": "Phone or WhatsApp contact number" },
+        "shippingAddress": { "type": "string", "maxLength": 300, "description": "Delivery address" },
+        "role": { "type": "string", "enum": ["customer", "admin"], "description": "User access role" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Creation timestamp" },
+        "updatedAt": { "type": "string", "format": "date-time", "description": "Last update timestamp" }
+      },
+      "required": ["id", "name", "email", "createdAt"]
+    },
+    "Order": {
+      "title": "Order",
+      "description": "Boutique order placed on website with WhatsApp payment and admin tracking verification",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Unique Order ID (e.g. SS-2026-XXXX)" },
+        "orderNumber": { "type": "string", "maxLength": 50, "description": "Human-friendly Order Number" },
+        "userId": { "type": "string", "description": "Customer Auth UID or guest reference" },
+        "customerName": { "type": "string", "maxLength": 100, "description": "Customer name" },
+        "customerEmail": { "type": "string", "format": "email", "maxLength": 150, "description": "Customer email" },
+        "customerPhone": { "type": "string", "maxLength": 25, "description": "Customer WhatsApp phone number (required for tracking)" },
+        "shippingAddress": { "type": "string", "maxLength": 300, "description": "Full delivery address" },
+        "productId": { "type": "string", "maxLength": 50, "description": "Catalog product ID" },
+        "productName": { "type": "string", "maxLength": 150, "description": "Product title" },
+        "productImage": { "type": "string", "maxLength": 500, "description": "Thumbnail image URL" },
+        "price": { "type": "number", "description": "Unit product price" },
+        "size": { "type": "string", "maxLength": 30, "description": "Selected size" },
+        "color": { "type": "string", "maxLength": 50, "description": "Selected colorway" },
+        "quantity": { "type": "number", "description": "Item quantity" },
+        "subtotal": { "type": "number", "description": "Subtotal before discount" },
+        "paymentMethod": { "type": "string", "enum": ["prepaid", "cod"], "description": "Prepaid (10% Off) or COD (35% Advance)" },
+        "discountAmount": { "type": "number", "description": "Discount applied (10% for prepaid, 0 for COD)" },
+        "advancePayable": { "type": "number", "description": "Advance amount payable (35% for COD, 100% discounted for prepaid)" },
+        "remainingCodAmount": { "type": "number", "description": "Remaining 65% payable on delivery for COD, 0 for prepaid" },
+        "totalPrice": { "type": "number", "description": "Final total order price" },
+        "paymentStatus": { "type": "string", "enum": ["Payment Pending", "Verified"], "description": "WhatsApp payment verification status" },
+        "orderStatus": { "type": "string", "enum": ["Awaiting Prepaid Payment", "Awaiting 35% COD Advance", "Order Confirmed", "In Production", "Shipped", "Delivered"], "description": "Lifecycle order progression" },
+        "trackingNumber": { "type": "string", "maxLength": 100, "description": "Shipment carrier tracking reference" },
+        "courierName": { "type": "string", "maxLength": 100, "description": "Shipment carrier name" },
+        "adminNotes": { "type": "string", "maxLength": 500, "description": "Internal artisan & admin notes" },
+        "whatsappUrl": { "type": "string", "maxLength": 1500, "description": "WhatsApp chat URL prefilled with details" },
+        "trackingUrl": { "type": "string", "maxLength": 1500, "description": "Direct tracking URL" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Order placement timestamp" },
+        "confirmedAt": { "type": "string", "format": "date-time", "description": "Timestamp when admin confirmed payment" },
+        "updatedAt": { "type": "string", "format": "date-time", "description": "Last status modification timestamp" }
+      },
+      "required": ["id", "customerName", "customerPhone", "productName", "price", "size", "color", "quantity", "paymentMethod", "paymentStatus", "orderStatus", "createdAt"]
+    },
+    "CatalogProduct": {
+      "title": "CatalogProduct",
+      "description": "Storefront product managed by admin with dynamic price, colors, sizes, and stock",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Product ID" },
+        "name": { "type": "string", "maxLength": 150, "description": "Product title" },
+        "price": { "type": "number", "description": "Current selling price in INR" },
+        "oldPrice": { "type": "number", "description": "Original crossed-out price" },
+        "discount": { "type": "string", "maxLength": 50, "description": "Discount badge text" },
+        "category": { "type": "string", "maxLength": 50, "description": "Collection or category" },
+        "shortDescription": { "type": "string", "maxLength": 300, "description": "Short summary" },
+        "fullDescription": { "type": "string", "maxLength": 3000, "description": "Detailed description & story" },
+        "availableSizes": { "type": "array", "description": "List of sizes" },
+        "availableColors": { "type": "array", "description": "Colorways with hex codes" },
+        "image": { "type": "string", "maxLength": 1000, "description": "Image URL or data URI" },
+        "bestseller": { "type": "boolean", "description": "Bestseller badge" },
+        "featured": { "type": "boolean", "description": "Homepage featured carousel" },
+        "hidden": { "type": "boolean", "description": "Hide product from storefront" },
+        "inStock": { "type": "boolean", "description": "Product in stock" },
+        "materialDetails": { "type": "string", "maxLength": 500, "description": "Yarn & craftsmanship info" },
+        "careInstructions": { "type": "string", "maxLength": 500, "description": "Washing and care guide" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Creation timestamp" },
+        "updatedAt": { "type": "string", "format": "date-time", "description": "Modification timestamp" }
+      },
+      "required": ["id", "name", "price", "category", "image"]
+    },
+    "CollectionCategory": {
+      "title": "CollectionCategory",
+      "description": "Categories and collections managed by admin",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Category identifier" },
+        "name": { "type": "string", "maxLength": 80, "description": "Category title" },
+        "description": { "type": "string", "maxLength": 200, "description": "Brief description" },
+        "displayOrder": { "type": "number", "description": "Sorting sequence" },
+        "hidden": { "type": "boolean", "description": "Hidden state" }
+      },
+      "required": ["id", "name"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": { "$ref": "#/entities/User" },
+      "description": "Customer profiles and role information"
+    },
+    "/orders/{orderId}": {
+      "schema": { "$ref": "#/entities/Order" },
+      "description": "Orders tracked and managed by admin"
+    },
+    "/products/{productId}": {
+      "schema": { "$ref": "#/entities/CatalogProduct" },
+      "description": "Dynamic storefront knitwear catalog"
+    },
+    "/categories/{categoryId}": {
+      "schema": { "$ref": "#/entities/CollectionCategory" },
+      "description": "Store categories and collections"
+    }
+  }
+}

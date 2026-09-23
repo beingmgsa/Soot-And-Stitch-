@@ -1,0 +1,34 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --cream-bg: #FAF7F2;
+    --forest-green: #1C3325;
+    --terracotta: #B85C38;
+    --muted-gold: #C4A265;
+  }
+
+  body {
+    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background-color: #FAF7F2;
+    color: #1C3325;
+  }
+}
+
+.font-serif {
+  font-family: 'Cormorant Garamond', Garamond, 'Times New Roman', serif;
+}
+
+.font-sans {
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+/* Custom smooth horizontal scrollbar styling for mobile scroll */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+

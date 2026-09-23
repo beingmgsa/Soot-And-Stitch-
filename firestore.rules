@@ -1,0 +1,79 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Default deny
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    // Check if authenticated user is registered admin
+    function isAdmin() {
+      return isSignedIn() && (
+        request.auth.token.email == 'beingmagrajpvt@gmail.com' ||
+        (exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+         get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin')
+      );
+    }
+
+    // --- Users Collection ---
+    match /users/{userId} {
+      allow get: if isOwner(userId) || isAdmin();
+      allow list: if isAdmin();
+      allow create: if isOwner(userId)
+        && request.resource.data.id == userId
+        && request.resource.data.name is string && request.resource.data.name.size() > 0 && request.resource.data.name.size() <= 100
+        && request.resource.data.email is string && request.resource.data.email.size() <= 150;
+      allow update: if (isOwner(userId) && (!('role' in request.resource.data) || request.resource.data.role == resource.data.role)) || isAdmin();
+      allow delete: if isAdmin();
+    }
+
+    // --- Products Collection ---
+    match /products/{productId} {
+      // Anyone can read storefront catalog products
+      allow read: if true;
+      // Only admin can create, update, or delete products
+      allow write: if isAdmin();
+    }
+
+    // --- Categories Collection ---
+    match /categories/{categoryId} {
+      // Anyone can read store categories
+      allow read: if true;
+      // Only admin can manage categories
+      allow write: if isAdmin();
+    }
+
+    // --- Orders Collection ---
+    match /orders/{orderId} {
+      // Admin has full read and update access
+      allow get: if isAdmin() || (isSignedIn() && resource.data.userId == request.auth.uid);
+      allow list: if isAdmin() || (isSignedIn() && resource.data.userId == request.auth.uid);
+
+      // Customer or guest can create an order with mandatory fields
+      allow create: if (
+        request.resource.data.id is string
+        && request.resource.data.customerName is string && request.resource.data.customerName.size() > 0 && request.resource.data.customerName.size() <= 100
+        && request.resource.data.customerPhone is string && request.resource.data.customerPhone.size() >= 7 && request.resource.data.customerPhone.size() <= 25
+        && request.resource.data.productName is string && request.resource.data.productName.size() <= 150
+        && request.resource.data.price is number
+        && request.resource.data.size is string && request.resource.data.size.size() <= 50
+        && request.resource.data.color is string && request.resource.data.color.size() <= 50
+        && request.resource.data.quantity is number
+        && request.resource.data.paymentStatus == 'Payment Pending'
+      );
+
+      // Only admin can update order statuses, mark payment verified, confirm orders, or add tracking
+      allow update: if isAdmin();
+      allow delete: if isAdmin();
+    }
+  }
+}

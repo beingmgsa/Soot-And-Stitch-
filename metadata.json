@@ -1,0 +1,6 @@
+{
+  "name": "Soot & Stitch - Handknit Warmth, Made With Care",
+  "description": "Handmade cardigan and knitwear boutique catalog. Thoughtfully made cardigans, shrugs, and sweaters crafted with care in Bhilwara, India.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
